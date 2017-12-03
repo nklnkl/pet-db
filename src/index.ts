@@ -10,5 +10,14 @@ import { SessionSchema, SessionInterface } from './schema/session';
 Dotenv.config();
 
 export {
-  Client
+  Client,
+  AccountDb,
+  PetDb,
+  SessionDb,
+  AccountSchema,
+  AccountInterface,
+  PetSchema,
+  PetInterface,
+  SessionSchema,
+  SessionInterface
 }
