@@ -33,6 +33,16 @@ class AccountDb {
     });
   }
 
+  public retrieveByEmail (email: string) : Promise<Account> {
+    return new Promise ((resolve, reject) => {
+      this.model.findOne({email:email})
+      .then((result: AccountInterface) => {
+        resolve(this.toObject(result));
+      })
+      .catch((err: any) => reject(err));
+    });
+  }
+
   public list () : Promise<Array<Account>> {
     return new Promise ((resolve, reject) => {
       this.model.find().exec()
