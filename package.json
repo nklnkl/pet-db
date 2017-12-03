@@ -2,12 +2,17 @@
   "name": "pet-db",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/index.js",
-  "typings": "./dist/index",
   "main": "index.js",
+  "typings": "./dist/index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/dotenv": "^4.0.2",
+    "@types/mongoose": "^4.7.28",
+    "dotenv": "^4.0.0",
+    "mongoose": "^4.13.6"
+  }
 }
