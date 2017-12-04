@@ -98,8 +98,6 @@ describe('Account', () => {
 
   });
 
-
-
   describe('update()', () => {
 
     it('should return an account with an id', (done: MochaDone) => {
@@ -116,12 +114,11 @@ describe('Account', () => {
       })
       .then((result: Account) => {
         assert.equal(result.getEmail(), update.getEmail());
-        done();  
+        done();
       });
 
     });
 
   });
-
 
 });
