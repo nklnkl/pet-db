@@ -17,7 +17,7 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.create(iAccount)
       .then((result: AccountInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Account());
@@ -30,7 +30,7 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.findById(id)
       .then((result: AccountInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Account());
@@ -43,7 +43,7 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.findOne({email:email})
       .then((result: AccountInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Account());
@@ -72,7 +72,7 @@ class AccountDb {
       let iUpdate: AccountInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: AccountInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Account());

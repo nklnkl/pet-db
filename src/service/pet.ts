@@ -17,7 +17,7 @@ class PetDb {
     return new Promise ((resolve, reject) => {
       this.model.create(iPet)
       .then((result: PetInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Pet());
@@ -30,7 +30,7 @@ class PetDb {
     return new Promise ((resolve, reject) => {
       this.model.findById(id)
       .then((result: PetInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Pet());
@@ -59,7 +59,7 @@ class PetDb {
       let iUpdate: PetInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: PetInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Pet());

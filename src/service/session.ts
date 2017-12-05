@@ -17,7 +17,7 @@ class SessionDb {
     return new Promise ((resolve, reject) => {
       this.model.create(iSession)
       .then((result: SessionInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Session());
@@ -30,7 +30,7 @@ class SessionDb {
     return new Promise ((resolve, reject) => {
       this.model.findById(id)
       .then((result: SessionInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Session());
@@ -59,7 +59,7 @@ class SessionDb {
       let iUpdate: SessionInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: SessionInterface) => {
-        if (result)
+        if (result != null)
           resolve(this.toObject(result));
         else
           resolve(new Session());
