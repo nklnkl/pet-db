@@ -17,7 +17,10 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.create(iAccount)
       .then((result: AccountInterface) => {
-        resolve(this.toObject(result));
+        if (result)
+          resolve(this.toObject(result));
+        else
+          resolve(new Account());
       })
       .catch((err: any) => reject(err));
     });
@@ -27,7 +30,10 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.findById(id)
       .then((result: AccountInterface) => {
-        resolve(this.toObject(result));
+        if (result)
+          resolve(this.toObject(result));
+        else
+          resolve(new Account());
       })
       .catch((err: any) => reject(err));
     });
@@ -37,7 +43,10 @@ class AccountDb {
     return new Promise ((resolve, reject) => {
       this.model.findOne({email:email})
       .then((result: AccountInterface) => {
-        resolve(this.toObject(result));
+        if (result)
+          resolve(this.toObject(result));
+        else
+          resolve(new Account());
       })
       .catch((err: any) => reject(err));
     });
@@ -63,7 +72,10 @@ class AccountDb {
       let iUpdate: AccountInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: AccountInterface) => {
-        resolve(this.toObject(result));
+        if (result)
+          resolve(this.toObject(result));
+        else
+          resolve(new Account());
       })
       .catch((err: any) => reject(err));
     });
