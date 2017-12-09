@@ -1,4 +1,4 @@
-import { Pet } from 'pet-entity';
+import { Pet, PetError } from 'pet-entity';
 import { PetInterface, PetSchema } from '../schema/pet';
 
 import { Model, Connection, DocumentQuery} from 'mongoose';
@@ -12,35 +12,67 @@ class PetDb {
     this.model = connection.model<PetInterface>("pet", PetSchema);
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public create (pet: Pet) : Promise<Pet> {
     let iPet: PetInterface = this.toDocument(pet);
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'PetDb';
+
       this.model.create(iPet)
       .then((result: PetInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Pet());
+        else {
+          error.code = 0;
+          reject(error);
+        }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+      1: pet not found
+  */
   public retrieve (id: string) : Promise<Pet> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'PetDb';
+
       this.model.findById(id)
       .then((result: PetInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Pet());
+        else {
+          error.code = 1;
+          reject(error);
+        }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public list () : Promise<Array<Pet>> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'PetDb';
+
       this.model.find().exec()
       .then((result: Array<PetInterface>) => {
         let array: Array<Pet> = [];
@@ -50,21 +82,36 @@ class PetDb {
         }
         resolve(array);
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public update (id: string, update: Pet) : Promise<Pet> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'PetDb';
+
       let iUpdate: PetInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: PetInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Pet());
+          else {
+            error.code = 0;
+            reject(error);
+          }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 

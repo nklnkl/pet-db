@@ -1,4 +1,4 @@
-import { Session } from 'pet-entity';
+import { Session, PetError } from 'pet-entity';
 import { SessionInterface, SessionSchema } from '../schema/session';
 
 import { Model, Connection, DocumentQuery} from 'mongoose';
@@ -12,35 +12,67 @@ class SessionDb {
     this.model = connection.model<SessionInterface>("session", SessionSchema);
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public create (session: Session) : Promise<Session> {
     let iSession: SessionInterface = this.toDocument(session);
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'SessionDb';
+
       this.model.create(iSession)
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Session());
+        else {
+          error.code = 0;
+          reject(error);
+        }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+      1: session not found
+  */
   public retrieve (id: string) : Promise<Session> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'SessionDb';
+
       this.model.findById(id)
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Session());
+        else {
+          error.code = 1;
+          reject(error);
+        }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public list () : Promise<Array<Session>> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'SessionDb';
+
       this.model.find().exec()
       .then((result: Array<SessionInterface>) => {
         let array: Array<Session> = [];
@@ -50,21 +82,36 @@ class SessionDb {
         }
         resolve(array);
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
+  /*
+    error codes
+      0: internal database error
+  */
   public update (id: string, update: Session) : Promise<Session> {
     return new Promise ((resolve, reject) => {
+      let error: PetError = new PetError();
+      error.source = 'SessionDb';
+
       let iUpdate: SessionInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else
-          resolve(new Session());
+        else {
+          error.code = 0;
+          reject(error);
+        }
       })
-      .catch((err: any) => reject(err));
+      .catch((err: any) => {
+        error.code = 0;
+        reject(error);
+      });
     });
   }
 
