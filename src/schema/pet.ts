@@ -10,6 +10,7 @@ interface PetInterface extends Document {
   breed: number;
   species: number;
   status: number;
+  images: Array<string>;
 }
 
 const PetSchema: Schema = new Schema({
@@ -20,7 +21,8 @@ const PetSchema: Schema = new Schema({
   birthDate: Number,
   breed: Number,
   species: Number,
-  status: Number
+  status: Number,
+  images: [String]
 });
 
 export { PetInterface, PetSchema };

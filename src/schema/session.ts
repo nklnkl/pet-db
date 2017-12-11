@@ -4,13 +4,13 @@ interface SessionInterface extends Document {
   id: string;
   created: number;
   updated: number;
-  userId: string;
+  accountId: string;
 }
 
 const SessionSchema: Schema = new Schema({
   created: Number,
   updated: Number,
-  userId: String
+  accountId: String
 });
 
 export { SessionInterface, SessionSchema };

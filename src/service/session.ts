@@ -1,4 +1,4 @@
-import { Session, PetError } from 'pet-entity';
+import { Session } from 'pet-entity';
 import { SessionInterface, SessionSchema } from '../schema/session';
 
 import { Model, Connection, DocumentQuery} from 'mongoose';
@@ -12,67 +12,51 @@ class SessionDb {
     this.model = connection.model<SessionInterface>("session", SessionSchema);
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return a Session if successful.
+  * **Reject codes**
+  * - **0**: internal database error
   */
   public create (session: Session) : Promise<Session> {
     let iSession: SessionInterface = this.toDocument(session);
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'SessionDb';
-
       this.model.create(iSession)
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 0;
-          reject(error);
-        }
+        else
+          reject(0);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
-      1: session not found
+  /**
+  * May return a Session if successful.
+  * **Reject codes**
+  * - **0**: internal database error
+  * - **1**: Session not found
   */
   public retrieve (id: string) : Promise<Session> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'SessionDb';
-
       this.model.findById(id)
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 1;
-          reject(error);
-        }
+        else
+          reject(1);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return a Session if successful.
+  * **Reject codes**
+  * - **0**: internal database error
   */
   public list () : Promise<Array<Session>> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'SessionDb';
-
       this.model.find().exec()
       .then((result: Array<SessionInterface>) => {
         let array: Array<Session> = [];
@@ -82,36 +66,26 @@ class SessionDb {
         }
         resolve(array);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return a Session if successful.
+  * **Reject codes**
+  * - **0**: internal database error
   */
   public update (id: string, update: Session) : Promise<Session> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'SessionDb';
-
       let iUpdate: SessionInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: SessionInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 0;
-          reject(error);
-        }
+        else
+          reject(0);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
@@ -125,7 +99,7 @@ class SessionDb {
       session.setCreated(iSession.created);
       session.setUpdated(iSession.updated);
 
-      session.setUserId(iSession.userId);
+      session.setAccountId(iSession.accountId);
 
     return session;
   }
@@ -137,7 +111,7 @@ class SessionDb {
       document.created = session.getCreated();
       document.updated = session.getUpdated();
 
-      document.userId = session.getUserId();
+      document.accountId = session.getAccountId();
 
     return document;
   }

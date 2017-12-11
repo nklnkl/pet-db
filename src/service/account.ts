@@ -1,4 +1,4 @@
-import { Account, PetError } from 'pet-entity';
+import { Account } from 'pet-entity';
 import { AccountInterface, AccountSchema } from '../schema/account';
 
 import { Model, Connection, DocumentQuery} from 'mongoose';
@@ -12,92 +12,71 @@ class AccountDb {
     this.model = connection.model<AccountInterface>("account", AccountSchema);
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return an Account if successful.
+  * **Reject codes**
+  * - **0**: internal database error
   */
   public create (account: Account) : Promise<Account> {
     let iAccount: AccountInterface = this.toDocument(account);
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'AccountDb';
-
       this.model.create(iAccount)
       .then((result: AccountInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 0;
-          reject(error);
-        }
+        else
+          reject(0);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
-      1: account not found
+  /**
+  * May return an Account if successful.
+  * **Reject codes**
+  * - **0**: internal database error
+  * - **1**: account not found
   */
   public retrieve (id: string) : Promise<Account> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'AccountDb';
-
       this.model.findById(id)
       .then((result: AccountInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 1;
-          reject(error);
-        }
+        else
+          reject(1)
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
-      1: account not found
+  /**
+  * May return an Account if successful.
+  * **Reject codes**
+  * - **0**: internal database error
+  * - **1**: account not found
   */
   public retrieveByEmail (email: string) : Promise<Account> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'AccountDb';
 
       this.model.findOne({email:email})
       .then((result: AccountInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 1;
-          reject(error);
-        }
+        else
+          reject(1);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return an Account if successful.
+  * - **Reject codes**
+  * - **0**: internal database error
   */
   public list () : Promise<Array<Account>> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'AccountDb';
 
       this.model.find().exec()
       .then((result: Array<AccountInterface>) => {
@@ -108,36 +87,27 @@ class AccountDb {
         }
         resolve(array);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 
-  /*
-    error codes
-      0: internal database error
+  /**
+  * May return an Account if successful.
+  * **Reject codes**
+  * **0**: internal database error
   */
   public update (id: string, update: Account) : Promise<Account> {
     return new Promise ((resolve, reject) => {
-      let error: PetError = new PetError();
-      error.source = 'AccountDb';
 
       let iUpdate: AccountInterface = this.toDocument(update);
       this.model.findByIdAndUpdate(id, iUpdate, { new: true})
       .then((result: AccountInterface) => {
         if (result != null)
           resolve(this.toObject(result));
-        else {
-          error.code = 0;
-          reject(error);
-        }
+        else
+          reject(0);
       })
-      .catch((err: any) => {
-        error.code = 0;
-        reject(error);
-      });
+      .catch((err: any) => reject(0));
     });
   }
 

@@ -1,11 +1,12 @@
 {
   "name": "pet-db",
-  "version": "1.1.1",
+  "version": "1.1.5",
   "description": "",
   "main": "./dist/index.js",
   "typings": "./dist/index",
   "scripts": {
-    "test": "mocha -r ts-node/register src/test/**/*.ts"
+    "test": "mocha -r ts-node/register src/test/**/*.ts",
+    "doc": "rm -rf doc && typedoc --out ./doc ./src --name pet-db --readme readme.md"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +15,7 @@
     "@types/mongoose": "^4.7.28",
     "dotenv": "^4.0.0",
     "mongoose": "^4.13.6",
-    "pet-entity": "^1.1.6"
+    "pet-entity": "^1.2.3"
   },
   "devDependencies": {
     "@types/chai": "^4.0.7",

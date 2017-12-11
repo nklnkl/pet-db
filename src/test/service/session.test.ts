@@ -30,12 +30,12 @@ describe('Session', () => {
 
     it('should return an session with an id', (done: MochaDone) => {
       let session: Session = new Session();
-      session.setUserId('testId');
+      session.setAccountId('testId');
 
       sessionDb.create(session)
       .then((result: Session) => {
         assert.isNotNull(result.getId());
-        assert.equal(result.getUserId(), session.getUserId())
+        assert.equal(result.getAccountId(), session.getAccountId())
         done();
       });
     });
@@ -46,7 +46,7 @@ describe('Session', () => {
 
     it('should return an session that is retrievable by id', (done: MochaDone) => {
       let session: Session = new Session();
-      session.setUserId('testId');
+      session.setAccountId('testId');
 
       sessionDb.create(session)
       .then((result: Session) => {
@@ -56,7 +56,7 @@ describe('Session', () => {
       .then((result: Session) => {
         assert.isNotNull(result);
         assert.isNotNull(result.getId());
-        assert.equal(result.getUserId(), session.getUserId())
+        assert.equal(result.getAccountId(), session.getAccountId())
         done();
       });
     });
@@ -96,7 +96,7 @@ describe('Session', () => {
         return sessionDb.update(id, update)
       })
       .then((result: Session) => {
-        assert.equal(result.getUserId(), update.getUserId());
+        assert.equal(result.getAccountId(), update.getAccountId());
         done();
       });
 
