@@ -17,18 +17,19 @@ class AccountDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public create (account: Account) : Promise<Account> {
+  public async create (account: Account) : Promise<Account|number> {
     let iAccount: AccountInterface = this.toDocument(account);
-    return new Promise ((resolve, reject) => {
-      this.model.create(iAccount)
-      .then((result: AccountInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+
+    try {
+      iAccount = await this.model.create(iAccount);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iAccount != null)
+      return this.toObject(iAccount);
+    else
+      throw (0);
   }
 
   /**
@@ -37,17 +38,19 @@ class AccountDb {
   * - **0**: internal database error
   * - **1**: account not found
   */
-  public retrieve (id: string) : Promise<Account> {
-    return new Promise ((resolve, reject) => {
-      this.model.findById(id)
-      .then((result: AccountInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(1)
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async retrieve (id: string) : Promise<Account|number> {
+    let iAccount: AccountInterface;
+
+    try {
+      iAccount = await this.model.findById(id);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iAccount != null)
+      return this.toObject(iAccount);
+    else
+      return 1;
   }
 
   /**
@@ -56,18 +59,19 @@ class AccountDb {
   * - **0**: internal database error
   * - **1**: account not found
   */
-  public retrieveByEmail (email: string) : Promise<Account> {
-    return new Promise ((resolve, reject) => {
+  public async retrieveByEmail (email: string) : Promise<Account|number> {
+    let iAccount: AccountInterface;
 
-      this.model.findOne({email:email})
-      .then((result: AccountInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(1);
-      })
-      .catch((err: any) => reject(0));
-    });
+    try {
+      iAccount = await this.model.findOne({email:email});
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iAccount != null)
+      return this.toObject(iAccount);
+    else
+      return 1;
   }
 
   /**
@@ -75,20 +79,22 @@ class AccountDb {
   * - **Reject codes**
   * - **0**: internal database error
   */
-  public list () : Promise<Array<Account>> {
-    return new Promise ((resolve, reject) => {
+  public async list () : Promise<Array<Account>> {
+    let iAccountArray: Array<AccountInterface>;
 
-      this.model.find().exec()
-      .then((result: Array<AccountInterface>) => {
-        let array: Array<Account> = [];
-        for(let i = 0; i < result.length; i++) {
-          let account: Account = this.toObject(result[i]);
-          array.push(account);
-        }
-        resolve(array);
-      })
-      .catch((err: any) => reject(0));
-    });
+    try {
+      iAccountArray = await this.model.find().exec();
+    }
+    catch (err) {
+      throw (err);
+    }
+
+    let array: Array<Account> = [];
+    for(let i = 0; i < iAccountArray.length; i++) {
+      let account: Account = this.toObject(iAccountArray[i]);
+      array.push(account);
+    }
+    return array;
   }
 
   /**
@@ -96,19 +102,19 @@ class AccountDb {
   * **Reject codes**
   * **0**: internal database error
   */
-  public update (id: string, update: Account) : Promise<Account> {
-    return new Promise ((resolve, reject) => {
+  public async update (id: string, update: Account) : Promise<Account> {
+    let iUpdate: AccountInterface = this.toDocument(update);
 
-      let iUpdate: AccountInterface = this.toDocument(update);
-      this.model.findByIdAndUpdate(id, iUpdate, { new: true})
-      .then((result: AccountInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+    try {
+      iUpdate = await this.model.findByIdAndUpdate(id, iUpdate, { new: true});
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iUpdate != null)
+      return this.toObject(iUpdate);
+    else
+      throw (0);
   }
 
   /*
