@@ -58,14 +58,40 @@ class PetDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public async list () : Promise<Array<Pet>> {
+  public async list (species?: number, breed?: number) : Promise<Array<Pet>> {
     let iPetArray: Array<PetInterface>;
 
-    try {
-      iPetArray = await this.model.find().exec();
+    if (species && breed) {
+      try {
+        iPetArray = await this.model.find({species: species, breed: breed}).exec();
+      }
+      catch (err) {
+        throw (err);
+      }
     }
-    catch (err) {
-      throw (err);
+    if (species && !breed) {
+      try {
+        iPetArray = await this.model.find({species: species}).exec();
+      }
+      catch (err) {
+        throw (err);
+      }
+    }
+    if (!species && breed) {
+      try {
+        iPetArray = await this.model.find({breed: breed}).exec();
+      }
+      catch (err) {
+        throw (err);
+      }
+    }
+    if (!species && !breed) {
+      try {
+        iPetArray = await this.model.find().exec();
+      }
+      catch (err) {
+        throw (err);
+      }
     }
 
     let array: Array<Pet> = [];
