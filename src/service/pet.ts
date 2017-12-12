@@ -17,18 +17,19 @@ class PetDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public create (pet: Pet) : Promise<Pet> {
+  public async create (pet: Pet) : Promise<Pet> {
     let iPet: PetInterface = this.toDocument(pet);
-    return new Promise ((resolve, reject) => {
-      this.model.create(iPet)
-      .then((result: PetInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+
+    try {
+      iPet = await this.model.create(iPet);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iPet != null)
+      return this.toObject(iPet);
+    else
+      throw (0);
   }
 
   /**
@@ -37,17 +38,19 @@ class PetDb {
   * - **0**: internal database error
   * - **1**: Pet not found
   */
-  public retrieve (id: string) : Promise<Pet> {
-    return new Promise ((resolve, reject) => {
-      this.model.findById(id)
-      .then((result: PetInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(1);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async retrieve (id: string) : Promise<Pet|number> {
+    let iPet: PetInterface;
+
+    try {
+      iPet = await this.model.findById(id);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iPet != null)
+      return this.toObject(iPet);
+    else
+      return 1;
   }
 
   /**
@@ -55,19 +58,22 @@ class PetDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public list () : Promise<Array<Pet>> {
-    return new Promise ((resolve, reject) => {
-      this.model.find().exec()
-      .then((result: Array<PetInterface>) => {
-        let array: Array<Pet> = [];
-        for(let i = 0; i < result.length; i++) {
-          let pet: Pet = this.toObject(result[i]);
-          array.push(pet);
-        }
-        resolve(array);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async list () : Promise<Array<Pet>> {
+    let iPetArray: Array<PetInterface>;
+
+    try {
+      iPetArray = await this.model.find().exec();
+    }
+    catch (err) {
+      throw (err);
+    }
+
+    let array: Array<Pet> = [];
+    for(let i = 0; i < iPetArray.length; i++) {
+      let pet: Pet = this.toObject(iPetArray[i]);
+      array.push(pet);
+    }
+    return array;
   }
 
   /**
@@ -75,18 +81,19 @@ class PetDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public update (id: string, update: Pet) : Promise<Pet> {
-    return new Promise ((resolve, reject) => {
-      let iUpdate: PetInterface = this.toDocument(update);
-      this.model.findByIdAndUpdate(id, iUpdate, { new: true})
-      .then((result: PetInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async update (id: string, update: Pet) : Promise<Pet> {
+    let iUpdate: PetInterface = this.toDocument(update);
+
+    try {
+      iUpdate = await this.model.findByIdAndUpdate(id, iUpdate, { new: true});
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iUpdate != null)
+      return this.toObject(iUpdate);
+    else
+      throw (0);
   }
 
   /*

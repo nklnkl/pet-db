@@ -17,18 +17,19 @@ class SessionDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public create (session: Session) : Promise<Session> {
+  public async create (session: Session) : Promise<Session> {
     let iSession: SessionInterface = this.toDocument(session);
-    return new Promise ((resolve, reject) => {
-      this.model.create(iSession)
-      .then((result: SessionInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+
+    try {
+      iSession = await this.model.create(iSession);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iSession != null)
+      return this.toObject(iSession);
+    else
+      throw (0);
   }
 
   /**
@@ -37,17 +38,19 @@ class SessionDb {
   * - **0**: internal database error
   * - **1**: Session not found
   */
-  public retrieve (id: string) : Promise<Session> {
-    return new Promise ((resolve, reject) => {
-      this.model.findById(id)
-      .then((result: SessionInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(1);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async retrieve (id: string) : Promise<Session|number> {
+    let iSession: SessionInterface;
+
+    try {
+      iSession = await this.model.findById(id);
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iSession != null)
+      return this.toObject(iSession);
+    else
+      return 1;
   }
 
   /**
@@ -55,19 +58,22 @@ class SessionDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public list () : Promise<Array<Session>> {
-    return new Promise ((resolve, reject) => {
-      this.model.find().exec()
-      .then((result: Array<SessionInterface>) => {
-        let array: Array<Session> = [];
-        for(let i = 0; i < result.length; i++) {
-          let session: Session = this.toObject(result[i]);
-          array.push(session);
-        }
-        resolve(array);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async list () : Promise<Array<Session>> {
+    let iSessionArray: Array<SessionInterface>;
+
+    try {
+      iSessionArray = await this.model.find().exec();
+    }
+    catch (err) {
+      throw (err);
+    }
+
+    let array: Array<Session> = [];
+    for(let i = 0; i < iSessionArray.length; i++) {
+      let session: Session = this.toObject(iSessionArray[i]);
+      array.push(session);
+    }
+    return array;
   }
 
   /**
@@ -75,18 +81,19 @@ class SessionDb {
   * **Reject codes**
   * - **0**: internal database error
   */
-  public update (id: string, update: Session) : Promise<Session> {
-    return new Promise ((resolve, reject) => {
-      let iUpdate: SessionInterface = this.toDocument(update);
-      this.model.findByIdAndUpdate(id, iUpdate, { new: true})
-      .then((result: SessionInterface) => {
-        if (result != null)
-          resolve(this.toObject(result));
-        else
-          reject(0);
-      })
-      .catch((err: any) => reject(0));
-    });
+  public async update (id: string, update: Session) : Promise<Session> {
+    let iUpdate: SessionInterface = this.toDocument(update);
+
+    try {
+      iUpdate = await this.model.findByIdAndUpdate(id, iUpdate, { new: true});
+    } catch (err) {
+      throw (err);
+    }
+
+    if (iUpdate != null)
+      return this.toObject(iUpdate);
+    else
+      throw (0);
   }
 
   /*
